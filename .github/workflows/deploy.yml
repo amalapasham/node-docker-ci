@@ -1,0 +1,24 @@
+name: Build HTML App
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          podman --version || sudo apt-get install -y podman
+          podman build -t my-html-app .
+
+      - name: Test container run
+        run: podman run --rm -d -p 8080:80 my-html-app
+
+      - name: Verify index.html exists
+        run: test -f index.html
